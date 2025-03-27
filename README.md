@@ -1,1 +1,90 @@
 # penugasan1-netics-cicd
+
+|               Nama               |    NRP     |
+| :------------------------------: | :--------: |
+| Muhammad Nabil Afrizal Rahmadani | 5025231014 |
+
+## Soal 1
+Buatlah API publik dengan endpoint /health yang menampilkan informasi sebagai berikut:
+
+Bahasa pemrograman dan teknologi yang digunakan dibebaskan kepada peserta.
+
+```json
+{
+  "nama": "Tunas Bimatara Chrisnanta Budiman",
+  "nrp": "5025231999",
+  "status": "UP",
+  “timestamp”: time	    // Current time
+  "uptime": time		// Server uptime
+}
+```
+
+### Jawaban
+Disini saya menggunakan python dengan framework Flask dikarenakan mudah untuk dibuat dan di deploy.
+
+```py
+from flask import Flask
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+start = datetime.now()
+
+@app.route('/health')
+def health():
+    return {'nama': 'Muhammad Nabil Afrizal Rahmadani',
+            'nrp': '5025231014',
+            'status': 'UP',
+            'timestamp': datetime.now(),
+            'uptime': str(datetime.now() - start)
+            }
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+```
+
+## Soal 2
+Lakukan deployment API tersebut dalam bentuk container (Docker Multi-stage) pada VPS publik.
+
+### Jawaban
+Untuk menjalankan aplikasi ini, kita perlu membuat Dockerfile terlebih dahulu.
+
+```Dockerfile
+FROM python:3.11-slim AS build
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir --upgrade -r requirements.txt
+COPY . .
+
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY --from=build /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=build /app /app
+
+EXPOSE 5000
+CMD ["python3", "app.py"]
+```
+
+Saya melakukan multi-stage deployment agar size image yang dihasilkan lebih kecil.
+
+Lalu saya menggunakan docker compose dengan konfigurasi sebagai berikut:
+
+```yml
+services:
+  app:
+    build: .
+    ports:
+      - "80:5000"
+    restart: always
+```
+
+Lalu jalankan dengan command `docker-compose up --build -d`, berikut adalah screenshot dari aplikasi yang sudah di deploy di lokal:
+
+![local deploy](media/deploy_local.png)
+
+### Deployment ke VPS
+
+Untuk deployment ke VPS, pertama-tama kita perlu menginstall docker dan docker-compose di VPS tersebut. Kita dapat mengikuti tutorial di dokumentasi [Docker](https://docs.docker.com/engine/install/ubuntu/).
+
+Lalu kita clone repository yang sudah kita buat sebelumnya, dan jalankan perintah `docker-compose up --build -d`. Setelah itu, kita dapat mengakses aplikasi tersebut melalui IP VPS pada port 80 dan pada endpoint /health.
