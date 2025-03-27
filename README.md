@@ -9,7 +9,7 @@ Buatlah API publik dengan endpoint /health yang menampilkan informasi sebagai be
 
 Bahasa pemrograman dan teknologi yang digunakan dibebaskan kepada peserta.
 
-```json
+```
 {
   "nama": "Tunas Bimatara Chrisnanta Budiman",
   "nrp": "5025231999",
@@ -81,10 +81,23 @@ services:
 
 Lalu jalankan dengan command `docker-compose up --build -d`, berikut adalah screenshot dari aplikasi yang sudah di deploy di lokal:
 
-![local deploy](media/deploy_local.png)
+<figure>
+  <img src="{{site.url}}/media/deploy_local.png" alt="deployed on local"/>
+  <figcaption>Local deployment</figcaption>
+</figure>
 
 ### Deployment ke VPS
 
 Untuk deployment ke VPS, pertama-tama kita perlu menginstall docker dan docker-compose di VPS tersebut. Kita dapat mengikuti tutorial di dokumentasi [Docker](https://docs.docker.com/engine/install/ubuntu/).
 
 Lalu kita clone repository yang sudah kita buat sebelumnya, dan jalankan perintah `docker-compose up --build -d`. Setelah itu, kita dapat mengakses aplikasi tersebut melalui IP VPS pada port 80 dan pada endpoint /health.
+
+<figure>
+  <img src="{{site.url}}/media/deploy_on_vps.png" alt="deploy on vps"/>
+  <figcaption>Deploying the App to VPS</figcaption>
+</figure>
+
+<figure>
+  <img src="{{site.url}}/media/get_from_browser.png" alt="get from browser"/>
+  <figcaption>Making a request to the deployed endpoint</figcaption>
+</figure>
