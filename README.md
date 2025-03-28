@@ -4,6 +4,9 @@
 | :------------------------------: | :--------: |
 | Muhammad Nabil Afrizal Rahmadani | 5025231014 |
 
+> [!TIP]
+> API dapat diakses pada http://128.199.169.61/health
+
 ## Soal 1
 Buatlah API publik dengan endpoint /health yang menampilkan informasi sebagai berikut:
 
@@ -83,7 +86,7 @@ Lalu jalankan dengan command `docker-compose up --build -d`, berikut adalah scre
 
 ![local deploy](media/deploy_local.png)
 
-### Deployment ke VPS
+#### Deployment ke VPS
 
 Untuk deployment ke VPS, pertama-tama kita perlu menginstall docker dan docker-compose di VPS tersebut. Kita dapat mengikuti tutorial di dokumentasi [Docker](https://docs.docker.com/engine/install/ubuntu/).
 
@@ -98,3 +101,51 @@ Lalu setelah melakukan deployment, kita akses di browser menggunakan url `http:/
 Setelah diakses, kita dapat melihat log sebagai berikut:
 
 ![log](media/log_on_vps.png)
+
+## Soal 3
+Lakukan proses CI/CD menggunakan GitHub Actions untuk melakukan otomasi proses deployment API. Terapkan juga best practices untuk menjaga kualitas environment CI/CD.
+
+### Jawaban
+Untuk melakukan CI/CD menggunakan GitHub Actions, saya membuat file `.github/workflows/deploy.yml` dengan konfigurasi sebagai berikut:
+
+```yml
+name: CI/CD via GitHub Actions
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@v1.2.2
+      with: 
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USER }}
+        key: ${{ secrets.PRIVATE_KEY }}
+        script: |
+              echo "Connected"
+              cd ${{ secrets.APP_DIRECTORY }}
+              git status
+              git reset --hard HEAD
+              git clean -fd
+              git checkout main
+              git pull origin main
+              docker compose down -v
+              docker compose up --build -d
+```
+
+Disini saya menggunakan `appleboy/ssh-action` untuk melakukan deployment ke VPS. Untuk menjaga _confidentiality_, saya menyimpan `VPS_HOST`, `VPS_USER`, `APP_DIRECTORY` dan `PRIVATE_KEY` di secrets repository.
+
+![secrets](media/secrets.png)
+
+Saya melakukan `git reset`, `git clean`, dan `git checkout` untuk memastikan bahwa folder pada VPS sama dengan repository yang ada di GitHub. Lalu saya melakukan `docker compose down -v` untuk menghapus container yang sudah ada dan `docker compose up --build -d` untuk menjalankan container yang baru.
+
+Berikut log dari GitHub Actions yang sudah dijalankan:
+
+![action log](media/action_log.png)
+
+Atau dapat dilihat pada [Action Workflow](https://github.com/miraicantsleep/penugasan1-netics-cicd/actions/runs/14119305586/job/39556462944)
