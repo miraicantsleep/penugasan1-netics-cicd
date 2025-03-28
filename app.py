@@ -6,7 +6,7 @@ start = datetime.now()
 
 @app.route('/health')
 def health():
-    return {'nama': 'mimirairairairairai',
+    return {'nama': 'Muhammad Nabil Afrizal Rahmadani',
             'nrp': '5025231014',
             'status': 'UP',
             'timestamp': datetime.now(),
