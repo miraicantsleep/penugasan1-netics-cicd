@@ -1,12 +1,12 @@
 from flask import Flask
-from datetime import datetime, timedelta
+from datetime import datetime
 
 app = Flask(__name__)
 start = datetime.now()
 
 @app.route('/health')
 def health():
-    return {'nama': 'Muhammad Nabil Afrizal Rahmadani',
+    return {'nama': 'mimirairairairairai',
             'nrp': '5025231014',
             'status': 'UP',
             'timestamp': datetime.now(),
