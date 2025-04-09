@@ -4,7 +4,7 @@ from datetime import datetime
 app = Flask(__name__)
 start = datetime.now()
 
-@app.route('/health')
+@app.route('/health-check/')
 def health():
     return {'nama': 'Muhammad Nabil Afrizal Rahmadani',
             'nrp': '5025231014',
